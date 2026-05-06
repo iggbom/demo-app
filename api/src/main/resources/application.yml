@@ -1,0 +1,35 @@
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/demo}
+    username: ${SPRING_DATASOURCE_USERNAME:demo}
+    password: ${SPRING_DATASOURCE_PASSWORD:demo}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # jwk-set-uri fetches keys lazily on first request; no startup connection needed
+          jwk-set-uri: ${CURITY_JWKS_URI:https://localhost:8443/oauth/v2/oauth-anonymous/jwks}
+
+server:
+  port: 8080
+
+api:
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never

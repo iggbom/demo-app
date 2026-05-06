@@ -1,0 +1,25 @@
+# Curity — secrets and generated files (never commit these)
+curity/license.json
+curity/signing-key.pem
+curity/tls.key
+curity/tls.crt
+# curity/idsvr-config-backup.xml  — safe to commit (all secrets are AES-encrypted by Curity)
+
+# Frontend
+frontend/.env
+frontend/node_modules/
+frontend/dist/
+
+# Java / Maven
+api/target/
+*.class
+*.jar
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db

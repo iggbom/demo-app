@@ -1,0 +1,585 @@
+<config xmlns="http://tail-f.com/ns/config/1.0">
+  <environments xmlns="https://curity.se/ns/conf/base">
+    <environment>
+      <admin-service>
+        <http>
+          <ssl-server-keystore>default-admin-ssl-key</ssl-server-keystore>
+          <web-ui>
+          </web-ui>
+          <restconf>
+          </restconf>
+        </http>
+      </admin-service>
+      <services>
+        <zones>
+          <default-zone>
+            <symmetric-key>data:text/plain;aes,v:S.NUlzT0dsWDJ0aTA2SldmaA==.0dZoT2i7dv_YpEozUIAAbA==.AqP0f3teUq5uX459fJhKMWNSZ-EVeF3qYnNl-IoGTX75Xi7C8fKv4N9V3orz2wO59UasqKu9mDijazg1hoAtsnt9pyXn1FGbei1CZUMuvYc=.jCbAD_MpXIqD2Vmm2lyznZSPjZTChypslpzHoAEM4-g=</symmetric-key>
+          </default-zone>
+        </zones>
+        <service-role>
+          <id>default</id>
+          <ssl-server-keystore>default-admin-ssl-key</ssl-server-keystore>
+          <webfinger/>
+          <endpoints>applications</endpoints>
+          <endpoints>authentication-service-anonymous</endpoints>
+          <endpoints>authentication-service-authentication</endpoints>
+          <endpoints>authentication-service-registration</endpoints>
+          <endpoints>token-service-anonymous</endpoints>
+          <endpoints>token-service-authorize</endpoints>
+          <endpoints>token-service-introspect</endpoints>
+          <endpoints>token-service-revoke</endpoints>
+          <endpoints>token-service-session</endpoints>
+          <endpoints>token-service-token</endpoints>
+          <endpoints>token-service-userinfo</endpoints>
+        </service-role>
+      </services>
+    </environment>
+  </environments>
+
+  <profiles xmlns="https://curity.se/ns/conf/base">
+    <profile>
+      <id>Applications</id>
+      <type xmlns:apps="https://curity.se/ns/conf/profile/apps">apps:apps-service</type>
+      <settings>
+        <apps-service xmlns="https://curity.se/ns/conf/profile/apps">
+          <oauth-profile-id>token-service</oauth-profile-id>
+        </apps-service>
+      </settings>
+      <endpoints>
+        <endpoint>
+          <id>applications</id>
+          <uri>/apps</uri>
+          <endpoint-kind>apps-anonymous</endpoint-kind>
+        </endpoint>
+      </endpoints>
+    </profile>
+
+    <profile>
+      <id>authentication-service</id>
+      <type xmlns:auth="https://curity.se/ns/conf/profile/authentication">auth:authentication-service</type>
+      <settings>
+        <authentication-service xmlns="https://curity.se/ns/conf/profile/authentication">
+          <authenticators>
+            <authenticator>
+              <id>username</id>
+              <username xmlns="https://curity.se/ns/ext-conf/username">
+              </username>
+            </authenticator>
+          </authenticators>
+          <protocols>
+            <protocol>
+              <id>default-simple-protocol</id>
+              <simple-api/>
+            </protocol>
+          </protocols>
+        </authentication-service>
+      </settings>
+      <endpoints>
+        <endpoint>
+          <id>authentication-service-anonymous</id>
+          <uri>/authn/anonymous</uri>
+          <endpoint-kind>auth-anonymous</endpoint-kind>
+        </endpoint>
+        <endpoint>
+          <id>authentication-service-authentication</id>
+          <uri>/authn/authentication</uri>
+          <endpoint-kind>auth-authentication</endpoint-kind>
+        </endpoint>
+        <endpoint>
+          <id>authentication-service-registration</id>
+          <uri>/authn/registration</uri>
+          <endpoint-kind>auth-registration</endpoint-kind>
+        </endpoint>
+      </endpoints>
+    </profile>
+
+    <profile>
+      <id>token-service</id>
+      <type xmlns:as="https://curity.se/ns/conf/profile/oauth">as:oauth-service</type>
+      <settings>
+        <authorization-server xmlns="https://curity.se/ns/conf/profile/oauth">
+          <authentication-service>
+            <authentication-profile>authentication-service</authentication-profile>
+          </authentication-service>
+          <client-capabilities>
+            <code>
+            </code>
+            <implicit/>
+            <client-credentials/>
+            <introspection/>
+            <oauth-token-exchange/>
+          </client-capabilities>
+
+          <!-- ── Standard OIDC scopes ──────────────────────────────────── -->
+          <scopes>
+            <scope>
+              <id>address</id>
+              <description>OpenId Connect address scope</description>
+              <claims>address</claims>
+            </scope>
+            <scope>
+              <id>email</id>
+              <description>OpenId Connect email scope</description>
+              <claims>email</claims>
+              <claims>email_verified</claims>
+            </scope>
+            <scope>
+              <id>openid</id>
+              <description>Standard OpenID Connect scope</description>
+            </scope>
+            <scope>
+              <id>phone</id>
+              <description>OpenId Connect phone scope</description>
+              <claims>phone_number</claims>
+              <claims>phone_number_verified</claims>
+            </scope>
+            <scope>
+              <id>profile</id>
+              <description>OpenId Connect profile scope</description>
+              <claims>birthdate</claims>
+              <claims>family_name</claims>
+              <claims>gender</claims>
+              <claims>given_name</claims>
+              <claims>locale</claims>
+              <claims>middle_name</claims>
+              <claims>name</claims>
+              <claims>nickname</claims>
+              <claims>picture</claims>
+              <claims>preferred_username</claims>
+              <claims>profile</claims>
+              <claims>updated_at</claims>
+              <claims>website</claims>
+              <claims>zoneinfo</claims>
+            </scope>
+            <!-- ── App-specific scope ─────────────────────────────────── -->
+            <scope>
+              <id>read:items</id>
+              <description>Read items from the demo API</description>
+            </scope>
+          </scopes>
+
+          <claims>
+            <claim>
+              <name>address</name>
+              <description>OpenID Connect address claim</description>
+              <value-provided-by>account-manager-claims-provider</value-provided-by>
+            </claim>
+            <claim>
+              <name>birthdate</name>
+              <description>OpenID Connect birthdate claim</description>
+              <value-provided-by>account-manager-claims-provider</value-provided-by>
+            </claim>
+            <claim>
+              <name>email</name>
+              <description>OpenID Connect email claim</description>
+              <value-provided-by>account-manager-claims-provider</value-provided-by>
+            </claim>
+            <claim>
+              <name>email_verified</name>
+              <description>OpenID Connect email_verified claim</description>
+              <value-provided-by>account-manager-claims-provider</value-provided-by>
+            </claim>
+            <claim>
+              <name>family_name</name>
+              <description>OpenID Connect family_name claim</description>
+              <value-provided-by>account-manager-claims-provider</value-provided-by>
+            </claim>
+            <claim>
+              <name>gender</name>
+              <description>OpenID Connect gender claim</description>
+              <value-provided-by>account-manager-claims-provider</value-provided-by>
+            </claim>
+            <claim>
+              <name>given_name</name>
+              <description>OpenID Connect given_name claim</description>
+              <value-provided-by>account-manager-claims-provider</value-provided-by>
+            </claim>
+            <claim>
+              <name>locale</name>
+              <description>OpenID Connect locale claim</description>
+              <value-provided-by>account-manager-claims-provider</value-provided-by>
+            </claim>
+            <claim>
+              <name>middle_name</name>
+              <description>OpenID Connect middle_name claim</description>
+              <value-provided-by>account-manager-claims-provider</value-provided-by>
+            </claim>
+            <claim>
+              <name>name</name>
+              <description>OpenID Connect name claim</description>
+              <value-provided-by>account-manager-claims-provider</value-provided-by>
+            </claim>
+            <claim>
+              <name>nickname</name>
+              <description>OpenID Connect nickname claim</description>
+              <value-provided-by>account-manager-claims-provider</value-provided-by>
+            </claim>
+            <claim>
+              <name>phone_number</name>
+              <description>OpenID Connect phone_number claim</description>
+              <value-provided-by>account-manager-claims-provider</value-provided-by>
+            </claim>
+            <claim>
+              <name>phone_number_verified</name>
+              <description>OpenID Connect phone_number_verified claim</description>
+              <value-provided-by>account-manager-claims-provider</value-provided-by>
+            </claim>
+            <claim>
+              <name>picture</name>
+              <description>OpenID Connect picture claim</description>
+              <value-provided-by>account-manager-claims-provider</value-provided-by>
+            </claim>
+            <claim>
+              <name>preferred_username</name>
+              <description>OpenID Connect preferred_username claim</description>
+              <value-provided-by>account-manager-claims-provider</value-provided-by>
+            </claim>
+            <claim>
+              <name>profile</name>
+              <description>OpenID Connect profile claim</description>
+              <value-provided-by>account-manager-claims-provider</value-provided-by>
+            </claim>
+            <claim>
+              <name>updated_at</name>
+              <description>OpenID Connect updated_at claim</description>
+              <value-provided-by>account-manager-claims-provider</value-provided-by>
+            </claim>
+            <claim>
+              <name>website</name>
+              <description>OpenID Connect website claim</description>
+              <value-provided-by>account-manager-claims-provider</value-provided-by>
+            </claim>
+            <claim>
+              <name>zoneinfo</name>
+              <description>OpenID Connect zoneinfo claim</description>
+              <value-provided-by>account-manager-claims-provider</value-provided-by>
+            </claim>
+            <claims-value-provider>
+              <id>account-manager-claims-provider</id>
+              <account-manager-claims-provider xmlns="https://curity.se/ns/ext-conf/account-manager-claims-provider">
+                <account-manager>
+                  <id>default-account-manager</id>
+                </account-manager>
+              </account-manager-claims-provider>
+            </claims-value-provider>
+            <claims-mappers>
+              <claims-mapper>
+                <id>default</id>
+                <id_token>
+                  <claim>address</claim>
+                  <claim>birthdate</claim>
+                  <claim>email</claim>
+                  <claim>email_verified</claim>
+                  <claim>family_name</claim>
+                  <claim>gender</claim>
+                  <claim>given_name</claim>
+                  <claim>locale</claim>
+                  <claim>middle_name</claim>
+                  <claim>name</claim>
+                  <claim>nickname</claim>
+                  <claim>phone_number</claim>
+                  <claim>phone_number_verified</claim>
+                  <claim>picture</claim>
+                  <claim>preferred_username</claim>
+                  <claim>profile</claim>
+                  <claim>updated_at</claim>
+                  <claim>website</claim>
+                  <claim>zoneinfo</claim>
+                </id_token>
+                <userinfo>
+                  <claim>address</claim>
+                  <claim>birthdate</claim>
+                  <claim>email</claim>
+                  <claim>email_verified</claim>
+                  <claim>family_name</claim>
+                  <claim>gender</claim>
+                  <claim>given_name</claim>
+                  <claim>locale</claim>
+                  <claim>middle_name</claim>
+                  <claim>name</claim>
+                  <claim>nickname</claim>
+                  <claim>phone_number</claim>
+                  <claim>phone_number_verified</claim>
+                  <claim>picture</claim>
+                  <claim>preferred_username</claim>
+                  <claim>profile</claim>
+                  <claim>updated_at</claim>
+                  <claim>website</claim>
+                  <claim>zoneinfo</claim>
+                </userinfo>
+              </claims-mapper>
+              <default-claims-mapper>default</default-claims-mapper>
+            </claims-mappers>
+          </claims>
+
+          <openid-connect>
+            <expose-metadata>
+            </expose-metadata>
+          </openid-connect>
+
+          <!-- ── Clients ───────────────────────────────────────────────── -->
+          <client-store>
+            <config-backed>
+
+              <!-- oauth.tools / testing -->
+              <client>
+                <id>client-one</id>
+                <secret>$5$dQLI5FXGj3lyKYa8$ao5LOsL7uG0Tn89F3uMuktWtwg.32lhAstndn9bwa3/</secret>
+                <redirect-uris>https://oauth.tools/callback/code</redirect-uris>
+                <redirect-uris>oauth.tools://app/callback/code</redirect-uris>
+                <scope>openid</scope>
+                <user-authentication>
+                  <allowed-authenticators>username</allowed-authenticators>
+                </user-authentication>
+                <capabilities>
+                  <code>
+                  </code>
+                </capabilities>
+                <validate-port-on-loopback-interfaces>true</validate-port-on-loopback-interfaces>
+              </client>
+
+              <!-- SPA: confidential client, Authorization Code + PKCE -->
+              <client>
+                <id>demo-frontend</id>
+                <secret>$5$2zvIMaZLCmlDrnOL$d2DY7j.ad3i6KuWOUePDSACrchOyPpeeNxSXZMFlWa7</secret>
+                <redirect-uris>http://localhost:3000/callback</redirect-uris>
+                <scope>openid</scope>
+                <scope>profile</scope>
+                <scope>read:items</scope>
+                <user-authentication>
+                  <allowed-authenticators>username</allowed-authenticators>
+                  <allowed-post-logout-redirect-uris>http://localhost:3000</allowed-post-logout-redirect-uris>
+                </user-authentication>
+                <capabilities>
+                  <code>
+                  </code>
+                </capabilities>
+              </client>
+
+              <!-- API gateway introspection client -->
+              <client>
+                <id>api-gateway-client</id>
+                <!-- plaintext: demo-secret -->
+                <secret>$5$2zvIMaZLCmlDrnOL$d2DY7j.ad3i6KuWOUePDSACrchOyPpeeNxSXZMFlWa7</secret>
+                <capabilities>
+                  <introspection/>
+                </capabilities>
+              </client>
+
+            </config-backed>
+          </client-store>
+        </authorization-server>
+      </settings>
+
+      <endpoints>
+        <endpoint>
+          <id>token-service-anonymous</id>
+          <uri>/oauth/v2/oauth-anonymous</uri>
+          <endpoint-kind>oauth-anonymous</endpoint-kind>
+        </endpoint>
+        <endpoint>
+          <id>token-service-authorize</id>
+          <uri>/oauth/v2/oauth-authorize</uri>
+          <endpoint-kind>oauth-authorize</endpoint-kind>
+        </endpoint>
+        <endpoint>
+          <id>token-service-introspect</id>
+          <uri>/oauth/v2/oauth-introspect</uri>
+          <endpoint-kind>oauth-introspect</endpoint-kind>
+        </endpoint>
+        <endpoint>
+          <id>token-service-revoke</id>
+          <uri>/oauth/v2/oauth-revoke</uri>
+          <endpoint-kind>oauth-revoke</endpoint-kind>
+        </endpoint>
+        <endpoint>
+          <id>token-service-session</id>
+          <uri>/oauth/v2/oauth-session</uri>
+          <endpoint-kind>oauth-session</endpoint-kind>
+        </endpoint>
+        <endpoint>
+          <id>token-service-token</id>
+          <uri>/oauth/v2/oauth-token</uri>
+          <endpoint-kind>oauth-token</endpoint-kind>
+        </endpoint>
+        <endpoint>
+          <id>token-service-userinfo</id>
+          <uri>/oauth/v2/oauth-userinfo</uri>
+          <endpoint-kind>oauth-userinfo</endpoint-kind>
+        </endpoint>
+      </endpoints>
+
+      <token-issuers>
+        <default-token-issuer>
+          <jwt-issuer-settings>
+            <signing-key-id>default-signing-key</signing-key-id>
+          </jwt-issuer-settings>
+          <default-data-source>default-datasource</default-data-source>
+        </default-token-issuer>
+      </token-issuers>
+    </profile>
+  </profiles>
+
+  <!-- ── Facilities ─────────────────────────────────────────────────────── -->
+  <facilities xmlns="https://curity.se/ns/conf/base">
+
+    <!-- PostgreSQL — credentials supplied via environment variables -->
+    <data-sources>
+      <data-source>
+        <id>default-datasource</id>
+        <jdbc xmlns="https://curity.se/ns/ext-conf/jdbc">
+          <connection-string>jdbc:postgresql://db:5432/curity</connection-string>
+          <username>demo</username>
+          <password>demo</password>
+          <standard-credentials-mode/>
+          <driver>org.postgresql.Driver</driver>
+        </jdbc>
+      </data-source>
+    </data-sources>
+
+    <crypto>
+      <!-- TLS keystore (Curity-encrypted, safe to commit) -->
+      <ssl>
+        <server-keystore>
+          <id>default-admin-ssl-key</id>
+          <keystore>data:application/p12;aes,v:S.b1dJbFNWUGNMNUJLelNYNw==.-zyHbpHG7oE4cqZwBOE8ig==.Q6QOYO5brRsQUjqYtq2oIaFPiZl_oNAFpshFkZTbA5vPqGzmAl7NZLll4lGHa-M0_EUiQ6KRMMBC9ypSM7yatsAcRZpolg201cIkhXws4gWZ7LkoA2KDnw2-d1nTM2zUAXBsW4xZ00GWOuuZ3GtN01fbrJAwDfAEjrjy5-d28Ob0IdO5uODjvytfLf-8zKXg7xK3LIujxTfqCvwmUar_W8hadClXi_uPp_M3Bp9NaPATKDqQ7X6ySxEh3jtu40RpVr8Pd6YRKhxWVgNv_57Y--dFAcpTSgwEreHfN_9Mi1rma7Qv7edX-PUFnwlqluDO-oVjHpBSdTHlLz0rC_tnQa4ZJNmE6AUr6wxPDf5opIBGlMWYqfDHwgyXgy53q1U3hxMpMhFW3U6WtMNjeBb7GAySOydkQPyMI2MYr3vTaNh5ykJgbLI9sOByCnzxgGj2c7ntMwN1mu4mnbl7gwWQ7sUFyi6VXljzPY-avX3I909ulRsRvmQQlG9cLscu5OYSlKPeAE9zb713KZW_PfAWc8SCF44B7gPyLrJnxTvs-3Nzgxc4kYSKkfbtRd7BXghIPPEAxlydQGl6iCnjYKzImPBdEv_7jW0cxt5ayOOVEsskf4VelxsJuZPvBIReF0ekvrQ6i1kcR5TcUVZDDcseDOxFFWYN8xHWnBZfo1V_-q6GrqI87voSBY_5mJ2U4s0JMknNd8fHLDugrVTzkn32sKQp42ZmByDvqAdsvHb3VsD2_iU4EnEcHJnwpAXa1XbU9fxxitwPsh2w8UYKWYCLNoOEveEjIrTsj8HbaEW00F3ZVHmMvU_s1zgQQLC3mTeP7f-hEkolWxcweKiz6ZS6fu742pv92zyCtq5jtqGjzI8VEneH5QjvUG78iQ2MxyjerFSy9BVeUl_ILIOGRZOCew4ZizkboVN0vyRAYJgWBoXMKEF6_6w7A3kTUjzYc_UPnjsUAuMwXRedw4u66VkHP4k4m_yKZ_H11Kq4ByiFgRWvg5V5loEantQvbq2wLfOeHpF0pBqlYVTULYLpK4d213NjnToqczbHuyR7av8bChpkrNwFme20j4GJk8Imt5DhDWrlZItgg515k_p7igGGuUAm5k8i-8DpTFhMUDuViXBlbSj4Jr3F-vReV6g870g-eOSIm7YK76cLQxjIKkaAqH573hvCaiCwTfCdMzefPxU8xBRJrdB5RxdU7fI0CpV6HiE6BgbXDSubujxAW_Y1J3cG5eolelPt-N0RIZlNk81JlDgMXCEYxrLYNObiYoLuRvT7riA8nRfy7eDXfWxOfcCJHBbTXsqzD1lP9Qr-939A2dJj9eh1pEN9slqR-8nhQMTSxr_MIqgR56CgTxzBNm-aew6fQLLNzCmM5zB80lvcKT91Hl5xtriKIZurNXj4jp7tbiefcaCSgfIUDv68PpAkKaU9zmoUTcwF5p1s9I4nkG7AOihtq1v3PNVUwgVDqEgO4zyM5XMnXb5VL3_8CxZxqeKcVQj-zkrDlHehd5AIYqbntjyR47PN7xGeHwJGZ0BrzACGd8OBUJPk-pWl7xfMV5MVDk7lW4p_mP9CdvVUAx_2xopkHqaclzrz8jAiNhvXHrm-SA9si0Hu_6CBWaa1JgzhdxvQrJmGWiMpMmdPPvlnN1ybT-Y7v2DMfP-QRAiODFSWb9BtfqJVdNSNMeBNxtj3oR1JDMAKRAZWCGJuL91oUrlOYxZIETrwuSTEk1qugarZM4Qd0dzovOPLy7pXHqzJkCYHpYbdCVwGNH9yqGItkt_eYqwAQKQ9hegsb1C32biGfqp64jvKVR-4EHJ0yOIIX3TUE660ELX8aDSC8xBWjePVkp1fcV1v2rjx_9g5iDGfIpZR9Lz2orG3LpyI3nest-AIscDkdVMU8zrB8CpY4I48rVknTE_hFyQ8yReiMXYjxB0VeguPWJMPxnjhHJkrwY1O-9vvkJqFXAvQWL41qD5ozXvgv0Rmf4pxxlsLV79cPFiV3GeWzsh4wHB0VuHmkwKNn_DuhDrWsZ2F7qhiDBGj8_iqiwA11wwyHhJO3a1vy6os7ou7g7GlnmoYCmEfrmIqS0UwQkfmLma8yhx6mqbkoLel0FXF_t9IQo23eigRAGtStApkp1D9RVIvyo-_2A2Uu8dUNvnKZ9KBYipx0AfrkY1l5EC-q_KggL-XlySU-2CfXSjBLSYxtjBueteXTgRQ4vxm_1O6kHHEu60qwCeqp5LYVNAYamysnOXGjHr5YFZCNrezPRoOKNXTsg5sU0CFgJT7Bp70f_7TP7KNrpY7gmMImYKzpls1I-wBjfObQDfxtZFSEfJVFY9paHP2WMKc8ku_q_yjWszzcHY9WTibOvDqBu81udcOgTP_zj5FaebGMazqlgKHaq992Uzfp_RNUSp8sgl-VcVlN0_-bbQl82iHEWiksnMhBB-yySyuEdFnThMR-MtctW4ma8OEy-xlCCCdGAr95F3pfewGE45i_q4gLuZLA1Qlp9rCaF8ITc2ZlDkxKbO_gb_5SsT8QXGzg9C5zGP7NhTO-MLzWo9_cRQuN6xaTt2GtoRzu3S7PxqfEIppdfZbTMxCMJCCUCPCKiIKnLdhHoXtQ6wuugfl-_-KWP-9i9ZIP2_Fyr1FqPbN2rhfU-6H0Sey6A2VbNbzR7Iv1u6j4NX-88XbFpg0NR4xbcg7PhMzkJPYAMWd5aKnyRJ-qv-cZsZOd77vceU_17mKpyiYKsGbO41etE_Fdoa_0qWDtFEiuhj4xDJjR_BdfaGMq8dw0gjoPDwmv8eYrvDk6S9Lmq7JsHIXM8ySIj7Ap7XpnII8VQ6D2NJXOZjQEisAeKG1bpcHebNBPSe6UsmyjEDIWpnSNHoxY886IrtfjEv8zEVHUX-Xj72sm0UdiZxTevfyA-PTlb_U-6NE3XHGXTyeOnKpZJnXkYtsvY52v6a9peEUxIW0rywFG6itITsVESUNApxmdc18RU5RnbxwY1aIKKpUoHn7OtzR-5C2IG8TZ451vLL9iC-qkmg1tqEFqgXAzh-YSveBT85c6iri4h46k3uB4_B5vDpkwUlQLE2P2qURtF9EJlfeHsvFjfNrh4mKC_jGbG8MNr2hWxxSzwLy-fz3rzO4U6ShVyJNVP0v2lK8NeQJBUhgHLra2gNm7ONeNNSDafMxkMzdV2llw1KWNieGpcAbhOoBkauFK9Hds5YQVwdpw9XZsSPlQ1-Ck7cJKpMXUM8GfqsVI_1iEv_j-MdEv8vRHXVrWVF5X1fkRV9NJcoeqcGsvPUSqSIglsaEp73wOv3aL-Gj-Or3ZQIOdjwseCHQo0od5aW6p8Ql4rR_dvoZCgKqZF2FyCPaN74ifzJ1eKuNlkCCkzo6GZoSvDGj9ygP3cgj6l94jLIft0eLZ2Ifyb6-EjjkqI5IcAT0PT_UHC4wNVGn4gj0Nw66YNRlmW850DKKNF1667kON2Zkfsp14O4BOYvqFxMLBuhConqLv6WwQfMRAaHRnZ96EFKyf5hdyG2FuOXLiqCzJ65JOIqsw4i6tVlAX9MPU0axyoiT8asyMti0mzHV746IjXKxmFKoepGKcLxQsLHbgXDnpSywBFxhe2Rjq8fNZ9rvQVnkKAyKePc0cKyCmMsbzsDzD4-N4pMf1pyOw1nheFWo5RUCpYUbd3Vc3ol_Dvf1CQ==.8oC3ZCQKf3eq8Fva32Gsk_ucIK6aH__I_onIwuhz2I4=</keystore>
+        </server-keystore>
+      </ssl>
+      <!-- JWT signing key (Curity-encrypted, safe to commit) -->
+      <signing-keys>
+        <signing-key>
+          <id>default-signing-key</id>
+          <keystore>data:application/p12;aes,v:S.b21mWEd3Q0xXdlRiRzdGVQ==.Z2XzJ0qfYKYH0RmXbpJ5uA==.JCHp7AEDaRo6OhxFbfFmtg4A496uZu6GRcyV_DO7mq0fvITsehBBP2MRUMYoOQGvBTtlvT6cFZYomGts6bkSi47skN36fdHp4uyEww3Q89DpGa-MSwtVDAvWCNCUcJm35cqKCKVvN7z52fu-cudwRsf046ZMIWTV6_ASlCPt4VFUiPmluVPfVIFuiDH2jyeoh67ilfugtFs9dOwbN4aO4xsMJUEtVWocBBoR4T3lqrEoD50LL1Wf9CCcMOPG7fEFU9zgHoG0uG_Ffhrqwd5S-t2rJ4ejwmcfKFruBafNRfDAVnDNkOpeZkgYLi9U2L_8sHgM4Csfyqt0MnlVg0zOZkD7MmoGr2rONH6zG69x2Fo9pXMOZO2nBu6llWg8Ht5sErcIvjIwcoAgAK_i7UumNZaTwe3PFpc0o2x0A5GRIeiwKsrRz175I7HpT93qTesL4JKFpv6l78fXhOtJJ6_cCY70CK_9Y77x6R_3niMq4aBSqlmS2fVB3eo7KACJCgiadxI1B6s88IqrVYgdipRwm4srNdpmNafUmZk7KeN6gDsA680ZsbGMKrlupjAnFmikYMQwWV07bGb_FQc1w07hbVqmoD7RS98gNwyLPdJq77IhskyB_SX8JIjmXdtbmz_4u9XkVZ0LYjtg1gU4YpS-G3n_VMOh84QLsQSht0NpQsgPugC6w6cmZdsNPfEPBZ-UGThu0gtLydzdeSkoEeCt-AeDJi94Y8BGSbATV2DXjQfJMkOzvcYovupcEjlCDhBVkDPj-h-bl9dBDFRXV45nhVmck9P1Fj-x_BhsRbNokiv_kL3-WUuk81F4ezcdIcuOEWwpC72wcohVZHrl6AXUjpGg4kiFe3hPt186IsPSQ2LQoW92JBVMu0QWr2T6H8Ucb0GD_tQnGIckgaO0R_nkmrUVdJvWtScCJo2NXQBSDkDAY7hEXdfEI6DZLtZaUAILZwDiTo5AtFfpELRFGjK860qSEt7QGPE2Vpxbj1yX-_zqpL9Usbnn1Xad2-ktcLdcxGR3cRb9_0OVl3O7bBYEZFL51fK3POrLeYlJ1K_xSSZOu1ciRwtgP9t9JfGgF6xaj4nGNiqhg8RWalFSbeA5mIgxgl8TVJBLZ8AD1tWVU-FvitmeN92u3cTy_3Bq8mZoW2eKIjndOa0piYJ-0MxIeN827iY67AoRdYIWkHdV6lqKZe67tnYxBca6NZ9xQ8uIyHFKZ_igv6mO6chXhPnETpc4mFTmJ_z_5lQahYSGNWjUPORAZRZYumTYVo5Uc2hZX6P3U8nJKw5ozZLuBy4X4l7qZZA1CySBzWDOFwOHRvdGWvK9ohQesmytAvBNCNpzCSsqkZxcNWGHHNL4OPlNhpSLEhV-eyKkAnD4yq9QZQEk21nybFqUFOrMfNj4xsyyPS4qKxSxSMxerp_zXnmqzmY7hpTY_AeyKtaAhqGNNFgWmRtx0Fbc3RQJttIFOzce-_TxiMlh2h1r04m59n704DvTI2Ck8MCpW-yNXXqSz8cmbjvNk35yLEYgnBt2N_1u3NtlzGrPUGTwd-PLybJD3lF_JXM19mj_k03goQpm9FuhKtLlvQ0cS7za2dwjlz4jcEx0mvjs93a5CLCrEV372a6VqwAGWlyyhgHrwfY9wTjH0IjfpZFSLcaAqDP0yHBiQEFsDVzR2jGVSUwcFpiIfiCiBkSjLFqhF0ar8LDnNFMltZr1fGLd6UQf26XqtvDd7d39YEU0XowIxvNFhR8gF21coGJGrv_x93tF2-MuBqsYIz25PlgK3QMLoihXKY09UfuXve3g2CHznMXnt6oditn2Mhq1-l8VbZm9euZViZA5akzta8kCBQ7wYnlnjg7OHnSimiTrHRfKAXwQehHKLx3JNsPNsEWDnw4JdZzqHIN5fw1IuHb5WjW3AJwZn2sgLEmu_ILH0DL4CGx_vP52UGkAYI9Grml04nx8JEalJ800rpkWOcf1fIF8U8tFucPrTueXyEMeKslr2IR3k7_85hRwHkt4ZFmijAxJlVwTJ85sgUtueZUnX9j7Jyw13GgJTxLyCT2RhEBDTv67u75DU9r759wUE824Yk7y-VbZHXvYv107tgWEdrtLpk-OK9Nz6W0L8aX6T5gCHrXi9MtfzaZXqJWCnxyYB6JCAnuLwGJVxLyQpKwJQP8TXumRhEdmsjjhHvAQF7Apzd48WTAD381jKfqVITo0whTT29vxGeOuyVMV6e2YKL0IHNNxJIiCDC5gZjKnYZQ4v-EPEwmczFsrdGvvs-mOsSAXx2bKRJpEx6zvwrftOzCaQIJmxP6wMkN7EQlxiEzWjIcQ7bw7RAiHNfGwrhACuh-QMS8R3czCiTKBLFPVArbxMSsMU-3OrX-5TPpAQmjfKsygPDrlDbIRJN-oCvXIibqUpkGY883ulG5WY0Szak6V1mtGbDXc1e0COW52N31h8eFCwl8ZrILfLB_L3eZx9KLQopOraQvi2kfPaRaZRz-D-t87I1asD7fVfDYy5nE_Kjyb2Vrrl4ur2ktOqyEVnYCZsuw2Nq1lDeO7DpeY_M7jKxKs2QF031WPZvoA2gY8MwlEH4ZbpDrdKFvncB94HitOIWeMvOjMZQQPpfLrw2dkLGRryXN0dN5X6xWzLrZ_RhR26837m9hmInwwy-5GveSPeU2G3DB8AN-7-j4I6HUyDZmA8Y16ltGnEi_cJdGnofonSnsKX2DMeR4Buczc0mHt-09UJe7ImeFOJdbNXNTd5KU0WgxgH74ztoOwasbq3ReTyI1y1_DCdDyZU52THC8IVtzXDicFJHIcz62F5ojenrsZNBgJVXvYlG3soHz0J8T9-9ITf2iYknJYecWbEBfBHnOqbeyU2XJKWGc9AMKO7ckAoneb-qv6owNmIC0HXvuOlACSzjIBkYkvVGfTQIc9IAOSdCXsbiYjBaTQmH8YouoSPdSQKXExbK6sdC5f5-7a6qJWUyLT-ROw9fquOtRCVPIchDNvmyj_wv21vpyAZm3Y2PXNo3TUf2qmvUJsEqQx3lD8-naCQd21v1daSx9y6s6EKYvDcd4ElEAE_mxx8GahucnLoFu0JTBUClcpQDGe1PlMf4lHmhgXNQa-G8joyduW6FCro-o5-BWzuijXKRokSLxXsaX5YC4UrIBQ0f1-w8b78Jc0Ykz9n_Pm0datAjDYoZ58zNj663iYYYfBwhTZXmOP7SHHJt3z_-z9WzQE_sc-Utmj1v6Alb9K4vzxTgbxJXZjmEi5iVQ_A0LDZv7033vX1kxZwqa-kd8xuHEk25p0ji7Cppt1yZaDl9Xp3a2fDcRqtbp828KCBEjibDB-3Ok6iKpeO9DZTBr8klPowkr-XgRTHcxxZKfro4tp2fBOAXORkv9i6-3XYFVU-kQwW-dhU0Kvf9NRjsMlrnx716IdJgMF24he6maEUGR3MNGoSjN92Gdi1aJluxCpBBIPrUti5ksxtsfLW_X2mKpnTIcSvLufgFZV06GEauYtrUgA6dhzUqZ9LPzPrnpvp8uKq4zBQjVXg_heF-QpLW8A0lgdtZfScGHuE53clTca_XykvP0bjdKLXeeVuanxYqZmywQymusw27avHIoy9Mip54k7tGAcqbN8BI2FFCkdkFBugPHx9-ocYCAmDyodSqOywwV4TC7-vctxcG2mtm-m0gR8MQ==.5ETozoDN9L42SUnzdBMUqPy7Tf2ADthdb7-trdQZeK8=</keystore>
+        </signing-key>
+      </signing-keys>
+      <signature-verification-keys>
+        <signature-verification-key>
+          <id>default-signature-verification-key</id>
+          <keystore>data:application/pem;aes,v:S.OGpUTWRtbFFFMVBENjlERQ==.4NSp-A5b9VFDXcnRhBU-ZA==.0BXvORnQ7Rhu55sFIjzf3gTXOTd0NDxqU-Ws9J8qor0fA2_gyzdEms1tZYcUfLMWNR7ne9IPX9cW2WXrOyspLqUowdiCtFP8069X9sAz4gpJNmfTd13ffkIP9XWWoJn-a2Pu2gpfNTHT-cUlP9OzzPxMNDgD3rUP4aPbG0NdDT_jWBle1m1rzSxLRlG4U2ZaGG2-2GSrfeKZctwsrfVryHnC99BZn2bsaPfqP78xoqvKPwsSA2kfq7u6hqrzkkJs34WrV7DK3X8J_2fPN2iNY562_L2s5R_tRtQMWGYgDQW00SVDUIFhq7nVEs1HmEyh6UrOzdMaKe_mPEz3TZkTcnmBNp-ctcdRbXvsMXYgnEJUOs8FAn_LgAa0U2PTpABKY8Yfj8AUTkAzTbzOUh7PRZZlX18AaQZlZqpE1pr84iiUHp5_nYHhk89c7HDkOOg0_bML8M_3dE_88LgJu6cZuRRsz0iXuIEkaV6Ya4ILCqYgXhzlyZLCRrJTnKiKBSr3fKDmtYYrCbOi7wynACwrMO9uIcHL_ApOPSumJqFP8j5toHrkSKTnaKmqwFcB3N-N33mo_VzQJbk4Q8lsezhemvuNXRshT0zm3JTlJjp_tf0lhE-WeqT4Z9tyNx4n70vAqc0JfbiyGwZc4TSJRIjY6x33n866t1_O7cQNIb8ItNDjSMR4AKL0i8gTqRMzXKXSVpUZkE3VSuR8tETXuQ9aHFvn3bUWGE4vLw4PZgJahzuPRvR_1W50pRYIt5ngENdp1Tt11k47BXat0bHBYapsjv04hK7gaAOhVcm9R-wIiJLw4ECGoINFaWum4EnHgKRdYYac3Bu8hgOnC8wOzlQwMKk1HsPNMst9_nmbYOyonBgDJQz8qv1-KHQ8kePBXo8TrLmGy-1mY96xvkcCz1ji85xeoGCq2a6wlrqdDMdXakWElsWo3-VpPrhuVmQhQcUzwy7pkPMOx6-fZOD6WGq3iLHsWjnyixOK5Sl-P82b7zxfM_DbdwiEL24MWc5h5D8k7dP5smqxIlS9jOmr7T6AndiQp5Ozor03nwBOviQVPNk1r0PrNxO6QLL-lMq9rzsD2ROdZ_rVeGTWmJeR6AV1ZtbNx8V97FjT8rxF5p6RgndRYl6-7C0vrq-HP3FRU_sVxP2QhSI-b52EJqcLN0-ug9v_yoR31b-MYmUXS4XwGKtDNYpJVM5ZnlN2rUXnRSZKBoMdsaYPfkMRiX93BYDZyqYLv8xropr3NHApPTDWUEk_bnjmV-YoEiD18UxCugcQHhCYuLiwGuWzGjRa2-Lo-zuBM0qivW3pXOn5SUS1MzdPvipvWESQS-WpscBEitEEqHdoUFAykXMzcP1_rNMLXHJT3Jg5S8qEaPgSbVPbrxtYgCcf1g71HF4vSf3Gf8yFNihC18-62_Txdd66Nu4qCJC55wZXQvcbVMH5gJpqD7IHlZkwr9lsn44rEmILRc3_vv3k588xjiNKg4byxoagfSNXXwDR0kDnaMR61CiyrufLWD41SZmtHcrX_Bq2w-2j_Qy0x5rJn90zF8qNzAbrJ69MrG9jv5VowTuYyfP18Vl00p2kcyd19Ug40NYz8bcHbBjS5x-ZEuhi_E4FYLEq_3uukDNUwe80p7PeFNnHzxL8cD_F62nlluu-gHqMhI8XNORyBR4MmKUrIz1g3OjxsgTgoYy8cw0Id_fy8cXssEU=.tjaqgcvcUzMbWBBA4qeag0opB9D7a5FeXGmmPdksp4M=</keystore>
+        </signature-verification-key>
+      </signature-verification-keys>
+    </crypto>
+
+  </facilities>
+
+  <!-- ── Processing ─────────────────────────────────────────────────────── -->
+  <processing xmlns="https://curity.se/ns/conf/base">
+    <account-managers>
+      <account-manager>
+        <id>default-account-manager</id>
+        <enable-registration>
+          <account-verification-method>no-verification</account-verification-method>
+        </enable-registration>
+        <account-data-source>default-datasource</account-data-source>
+      </account-manager>
+    </account-managers>
+    <credential-managers>
+      <credential-manager>
+        <id>default-credential-manager</id>
+        <Sha2WithSha256>
+        </Sha2WithSha256>
+        <data-source-backed>
+          <data-source-id>default-datasource</data-source-id>
+        </data-source-backed>
+      </credential-manager>
+    </credential-managers>
+  </processing>
+
+  <!-- ── NACM / AAA ─────────────────────────────────────────────────────── -->
+  <nacm xmlns="urn:ietf:params:xml:ns:yang:ietf-netconf-acm">
+    <write-default>permit</write-default>
+    <groups>
+      <group>
+        <name>admin</name>
+        <user-name>admin</user-name>
+      </group>
+    </groups>
+    <rule-list>
+      <name>admin</name>
+      <group>admin</group>
+      <rule>
+        <name>any-access</name>
+        <action>permit</action>
+      </rule>
+    </rule-list>
+    <rule-list>
+      <name>any-group</name>
+      <group>*</group>
+      <rule>
+        <name>tailf-aaa-authentication</name>
+        <module-name>tailf-aaa</module-name>
+        <path>/aaa/authentication/users/user[name='$USER']</path>
+        <access-operations>read update</access-operations>
+        <action>permit</action>
+      </rule>
+      <rule>
+        <name>tailf-aaa-user</name>
+        <module-name>tailf-aaa</module-name>
+        <path>/user[name='$USER']</path>
+        <access-operations>create read update delete</access-operations>
+        <action>permit</action>
+      </rule>
+      <rule>
+        <name>tailf-webui-user</name>
+        <module-name>tailf-webui</module-name>
+        <path>/webui/data-stores/user-profile[username='$USER']</path>
+        <access-operations>create read update delete</access-operations>
+        <action>permit</action>
+      </rule>
+    </rule-list>
+  </nacm>
+  <aaa xmlns="http://tail-f.com/ns/aaa/1.1">
+    <authentication>
+      <users>
+        <user>
+          <name>admin</name>
+          <uid>0</uid>
+          <gid>0</gid>
+          <password>$5$fRErenBP$BEDvPzPumYhz2OfkxlxuCp3TD6HY5KDf9jaOuFwhBfB</password>
+          <ssh_keydir>/opt/idsvr/home/admin/.ssh</ssh_keydir>
+          <homedir>/opt/idsvr/home/admin</homedir>
+        </user>
+      </users>
+    </authentication>
+    <ios>
+      <level>
+        <nr>0</nr>
+        <prompt>\h> </prompt>
+      </level>
+      <level>
+        <nr>15</nr>
+        <prompt>\h# </prompt>
+      </level>
+      <privilege>
+        <mode>exec</mode>
+        <level>
+          <nr>0</nr>
+          <command>
+            <name>action</name>
+          </command>
+          <command>
+            <name>autowizard</name>
+          </command>
+          <command>
+            <name>enable</name>
+          </command>
+          <command>
+            <name>exit</name>
+          </command>
+          <command>
+            <name>help</name>
+          </command>
+          <command>
+            <name>startup</name>
+          </command>
+        </level>
+        <level>
+          <nr>15</nr>
+          <command>
+            <name>configure</name>
+          </command>
+        </level>
+      </privilege>
+    </ios>
+  </aaa>
+</config>
