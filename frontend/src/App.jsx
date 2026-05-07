@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { userManager } from './auth/userManager'
+import { getUserManager } from './auth/userManager'
 import { ItemList } from './components/ItemList'
 
 export default function App() {
@@ -10,21 +10,21 @@ export default function App() {
     const path = window.location.pathname
 
     if (path === '/callback') {
-      userManager.signinRedirectCallback()
+      getUserManager().signinRedirectCallback()
         .then(u => {
           setUser(u)
           window.history.replaceState({}, '', '/')
         })
         .catch(err => console.error('Callback error:', err))
     } else {
-      userManager.getUser().then(u => {
+      getUserManager().getUser().then(u => {
         if (u && !u.expired) setUser(u)
       })
     }
   }, [])
 
-  const login  = () => userManager.signinRedirect()
-  const logout = () => userManager.signoutRedirect()
+  const login  = () => getUserManager().signinRedirect()
+  const logout = () => getUserManager().signoutRedirect()
 
   return (
     <main style={{ fontFamily: 'sans-serif', maxWidth: 800, margin: '2rem auto', padding: '0 1rem' }}>
