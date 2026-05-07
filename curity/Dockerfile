@@ -6,6 +6,8 @@ COPY config.xml.template /opt/idsvr/etc/init/config.xml.template
 # Wrapper entrypoint: writes license from env var, envsubsts config, then execs original
 COPY docker-entrypoint.sh /opt/idsvr/bin/docker-entrypoint-custom.sh
 USER root
+RUN apt-get update && apt-get install -y --no-install-recommends gettext-base \
+ && rm -rf /var/lib/apt/lists/*
 RUN chmod +x /opt/idsvr/bin/docker-entrypoint-custom.sh
 
 ENTRYPOINT ["/opt/idsvr/bin/docker-entrypoint-custom.sh"]
