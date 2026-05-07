@@ -25,11 +25,8 @@ RUN npm ci
 
 COPY . .
 
-# The .env file must exist at build time so Vite can inline VITE_* variables
-ARG VITE_AUTHORITY
-ARG VITE_CLIENT_ID
-ARG VITE_CLIENT_SECRET
-RUN VITE_AUTHORITY=${VITE_AUTHORITY} VITE_CLIENT_ID=${VITE_CLIENT_ID} VITE_CLIENT_SECRET=${VITE_CLIENT_SECRET} npm run build
+# No VITE_* build-time args needed — config is injected at runtime via window.env
+RUN npm run build
 
 # ── Stage 3: nginx runtime ──────────────────────────────────────────────────
 FROM nginx:alpine
@@ -39,10 +36,18 @@ RUN mkdir -p /usr/lib/nginx/modules
 COPY --from=module-builder /nginx-src/objs/ngx_curity_http_phantom_token_module.so /usr/lib/nginx/modules/
 
 # Replace the main nginx.conf with one that loads the module.
-# Must be done via COPY (not a shell heredoc) to reliably overwrite the file.
 COPY nginx-main.conf /etc/nginx/nginx.conf
 
+# Config templates processed at container startup by docker-entrypoint.sh
+COPY config.js.template    /etc/nginx/config.js.template
+COPY nginx.conf.template   /etc/nginx/nginx.conf.template
+
 COPY --from=build /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Entrypoint: generate runtime configs from env vars, then start nginx
+COPY 40-generate-configs.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
 
 EXPOSE 80
+ENTRYPOINT ["/docker-entrypoint.sh"]
+CMD ["nginx", "-g", "daemon off;"]

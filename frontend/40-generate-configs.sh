@@ -14,3 +14,5 @@ envsubst '${CURITY_SCHEME} ${CURITY_HOST} ${CURITY_PORT} ${API_HOST} ${API_PORT}
   < /etc/nginx/nginx.conf.template \
   > /etc/nginx/conf.d/default.conf
 echo "Generated /etc/nginx/conf.d/default.conf"
+
+exec "$@"
