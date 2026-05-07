@@ -4,6 +4,11 @@ spring:
     username: ${SPRING_DATASOURCE_USERNAME:demo}
     password: ${SPRING_DATASOURCE_PASSWORD:demo}
     driver-class-name: org.postgresql.Driver
+  sql:
+    init:
+      # Always run schema.sql + data.sql — both are idempotent (IF NOT EXISTS / ON CONFLICT).
+      # This bootstraps the DB on Railway without needing a manual init step.
+      mode: always
   jpa:
     hibernate:
       ddl-auto: validate

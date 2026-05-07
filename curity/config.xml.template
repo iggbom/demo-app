@@ -1,7 +1,7 @@
 <config xmlns="http://tail-f.com/ns/config/1.0">
   <environments xmlns="https://curity.se/ns/conf/base">
     <environment>
-      <base-url>https://localhost:8443</base-url>
+      <base-url>${CURITY_BASE_URL}</base-url>
       <admin-service>
         <http>
           <ssl-server-keystore>default-admin-ssl-key</ssl-server-keystore>
@@ -19,7 +19,7 @@
         </zones>
         <service-role>
           <id>default</id>
-          <ssl-server-keystore>default-admin-ssl-key</ssl-server-keystore>
+          <protocol>http</protocol>
           <webfinger/>
           <endpoints>applications</endpoints>
           <endpoints>authentication-service-anonymous</endpoints>
@@ -343,13 +343,13 @@
               <client>
                 <id>demo-frontend</id>
                 <secret>$5$2zvIMaZLCmlDrnOL$d2DY7j.ad3i6KuWOUePDSACrchOyPpeeNxSXZMFlWa7</secret>
-                <redirect-uris>http://localhost:3000/callback</redirect-uris>
+                <redirect-uris>${FRONTEND_URL}/callback</redirect-uris>
                 <scope>openid</scope>
                 <scope>profile</scope>
                 <scope>read:items</scope>
                 <user-authentication>
                   <allowed-authenticators>username</allowed-authenticators>
-                  <allowed-post-logout-redirect-uris>http://localhost:3000</allowed-post-logout-redirect-uris>
+                  <allowed-post-logout-redirect-uris>${FRONTEND_URL}</allowed-post-logout-redirect-uris>
                 </user-authentication>
                 <capabilities>
                   <code>
@@ -429,9 +429,9 @@
       <data-source>
         <id>default-datasource</id>
         <jdbc xmlns="https://curity.se/ns/ext-conf/jdbc">
-          <connection-string>jdbc:postgresql://db:5432/curity</connection-string>
-          <username>demo</username>
-          <password>demo</password>
+          <connection-string>${CURITY_DB_URL}</connection-string>
+          <username>${CURITY_DB_USER}</username>
+          <password>${CURITY_DB_PASS}</password>
           <standard-credentials-mode/>
           <driver>org.postgresql.Driver</driver>
         </jdbc>

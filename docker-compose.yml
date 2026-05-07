@@ -66,11 +66,19 @@ services:
   frontend:
     build:
       context: ./frontend
-      args:
-        # Curity must be reachable from the user's browser, so we use localhost.
-        VITE_AUTHORITY:     https://localhost:8443/oauth/v2/oauth-anonymous
-        VITE_CLIENT_ID:     demo-frontend
-        VITE_CLIENT_SECRET: demo-secret
+    environment:
+      # Browser-facing OIDC config — authority must be reachable from the user's browser
+      AUTHORITY:           https://localhost:8443/oauth/v2/oauth-anonymous
+      CLIENT_ID:           demo-frontend
+      CLIENT_SECRET:       demo-secret
+      # Upstream hostnames used by nginx (internal Docker network)
+      CURITY_SCHEME:       https
+      CURITY_HOST:         curity
+      CURITY_PORT:         "8443"
+      API_HOST:            api
+      API_PORT:            "8080"
+      # Base64(api-gateway-client:demo-secret) used for phantom token introspection
+      GATEWAY_CREDENTIAL:  YXBpLWdhdGV3YXktY2xpZW50OmRlbW8tc2VjcmV0
     ports:
       - "3000:80"
     depends_on:
