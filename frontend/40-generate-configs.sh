@@ -1,12 +1,11 @@
 #!/bin/sh
 set -e
 
-# Generate /usr/share/nginx/html/config.js from environment variables.
-# The browser loads this before the React bundle, populating window.env.
-envsubst '${AUTHORITY} ${CLIENT_ID} ${CLIENT_SECRET}' \
-  < /etc/nginx/config.js.template \
-  > /usr/share/nginx/html/config.js
-echo "Generated /usr/share/nginx/html/config.js"
+# Inject window.env config inline into the built index.html.
+# Vite strips external <script src> tags during build, so we inject directly.
+sed -i "s|</head>|<script>window.env={AUTHORITY:\"${AUTHORITY}\",CLIENT_ID:\"${CLIENT_ID}\",CLIENT_SECRET:\"${CLIENT_SECRET}\"};</script></head>|" \
+  /usr/share/nginx/html/index.html
+echo "Injected window.env into index.html"
 
 # Generate /etc/nginx/conf.d/default.conf from template.
 # Only the listed variables are substituted; nginx runtime vars ($host etc.) are left intact.
