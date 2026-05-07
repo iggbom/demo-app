@@ -16,5 +16,5 @@ envsubst '${CURITY_BASE_URL} ${FRONTEND_URL} ${CURITY_DB_URL} ${CURITY_DB_USER} 
   > /opt/idsvr/etc/init/config.xml
 echo "config.xml generated from template."
 
-# Hand off to the original Curity entrypoint.
-exec /opt/idsvr/etc/entry-point.sh "$@"
+# Start Curity (CMD from base image is just the bare 'idsvr' binary on PATH).
+exec idsvr "$@"
