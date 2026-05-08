@@ -13,7 +13,7 @@ server {
     # CURITY_SCHEME is 'https' locally and 'http' on Railway (TLS terminated at edge).
     location /token {
         proxy_pass ${CURITY_SCHEME}://${CURITY_HOST}:${CURITY_PORT}/oauth/v2/oauth-token;
-        proxy_ssl_verify off;
+        proxy_ssl_server_name on;
         proxy_set_header Host ${CURITY_HOST};
     }
 
@@ -39,6 +39,6 @@ server {
         proxy_set_header Content-Type "application/x-www-form-urlencoded";
         proxy_set_header Authorization "Basic ${GATEWAY_CREDENTIAL}";
         proxy_pass "${CURITY_SCHEME}://${CURITY_HOST}:${CURITY_PORT}/oauth/v2/oauth-introspect";
-        proxy_ssl_verify off;
+        proxy_ssl_server_name on;
     }
 }
