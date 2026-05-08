@@ -15,7 +15,7 @@ INSERT INTO items (name, description) VALUES
     ('Widget Epsilon','Experimental widget — handle with care');
 
 -- ── curity database ───────────────────────────────────────────────────────────
-CREATE DATABASE curity OWNER demo;
+CREATE DATABASE curity;
 
 \c curity
 
