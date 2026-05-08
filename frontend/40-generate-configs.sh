@@ -23,6 +23,10 @@ CURITY_PUBLIC_HOST=$(echo "${CURITY_BASE_URL}" | sed 's|https\?://||' | cut -d'/
 export CURITY_PUBLIC_HOST
 echo "Curity public host: ${CURITY_PUBLIC_HOST}"
 
+# Build the Basic auth credential for the phantom token introspection endpoint.
+GATEWAY_CREDENTIAL=$(printf '%s:%s' "${INTROSPECTION_CLIENT}" "${INTROSPECTION_SECRET}" | base64 | tr -d '\n')
+export GATEWAY_CREDENTIAL
+
 # Generate /etc/nginx/conf.d/default.conf from template.
 # Only the listed variables are substituted; nginx runtime vars ($host etc.) are left intact.
 envsubst '${NGINX_RESOLVER} ${CURITY_SCHEME} ${CURITY_HOST} ${CURITY_PORT} ${CURITY_PUBLIC_HOST} ${API_SCHEME} ${API_HOST} ${API_PORT} ${GATEWAY_CREDENTIAL}' \
