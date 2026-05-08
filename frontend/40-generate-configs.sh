@@ -18,6 +18,11 @@ esac
 export NGINX_RESOLVER
 echo "Using DNS resolver: ${NGINX_RESOLVER}"
 
+# Derive the public Curity hostname from CURITY_BASE_URL (strip scheme and path).
+CURITY_PUBLIC_HOST=$(echo "${CURITY_BASE_URL}" | sed 's|https\?://||' | cut -d'/' -f1)
+export CURITY_PUBLIC_HOST
+echo "Curity public host: ${CURITY_PUBLIC_HOST}"
+
 # Generate /etc/nginx/conf.d/default.conf from template.
 # Only the listed variables are substituted; nginx runtime vars ($host etc.) are left intact.
 envsubst '${NGINX_RESOLVER} ${CURITY_SCHEME} ${CURITY_HOST} ${CURITY_PORT} ${CURITY_PUBLIC_HOST} ${API_SCHEME} ${API_HOST} ${API_PORT} ${GATEWAY_CREDENTIAL}' \
