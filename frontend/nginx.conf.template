@@ -3,6 +3,10 @@ server {
     root /usr/share/nginx/html;
     index index.html;
 
+    # Use the container DNS resolver so .railway.internal hostnames are resolved
+    # at request time (not startup), supporting Railway's IPv6 private networking.
+    resolver 127.0.0.11 valid=10s ipv6=on;
+
     # Serve the SPA — any unknown path falls back to index.html
     location / {
         try_files $uri $uri/ /index.html;
@@ -10,9 +14,9 @@ server {
 
     # Proxy the token endpoint through the same origin to avoid CORS issues
     # with confidential client (Authorization: Basic) token requests.
-    # CURITY_SCHEME is 'https' locally and 'http' on Railway (TLS terminated at edge).
     location /token {
-        proxy_pass ${CURITY_SCHEME}://${CURITY_HOST}:${CURITY_PORT}/oauth/v2/oauth-token;
+        set $curity_upstream "${CURITY_SCHEME}://${CURITY_HOST}:${CURITY_PORT}";
+        proxy_pass $curity_upstream/oauth/v2/oauth-token;
         proxy_ssl_server_name on;
         proxy_set_header Host ${CURITY_HOST};
     }
@@ -24,7 +28,8 @@ server {
         phantom_token on;
         phantom_token_introspection_endpoint curity;
 
-        proxy_pass https://${API_HOST}:${API_PORT};
+        set $api_upstream "${API_SCHEME}://${API_HOST}:${API_PORT}";
+        proxy_pass $api_upstream;
         proxy_ssl_server_name on;
         proxy_set_header Host ${API_HOST};
         proxy_set_header X-Real-IP $remote_addr;
@@ -35,11 +40,12 @@ server {
     # Authorization: Bearer header from overriding the Basic auth credential.
     location curity {
         internal;
+        set $curity_upstream "${CURITY_SCHEME}://${CURITY_HOST}:${CURITY_PORT}";
         proxy_pass_request_headers off;
         proxy_set_header Accept "application/jwt";
         proxy_set_header Content-Type "application/x-www-form-urlencoded";
         proxy_set_header Authorization "Basic ${GATEWAY_CREDENTIAL}";
-        proxy_pass "${CURITY_SCHEME}://${CURITY_HOST}:${CURITY_PORT}/oauth/v2/oauth-introspect";
+        proxy_pass $curity_upstream/oauth/v2/oauth-introspect;
         proxy_ssl_server_name on;
     }
 }

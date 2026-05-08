@@ -9,7 +9,7 @@ echo "Injected window.env into index.html"
 
 # Generate /etc/nginx/conf.d/default.conf from template.
 # Only the listed variables are substituted; nginx runtime vars ($host etc.) are left intact.
-envsubst '${CURITY_SCHEME} ${CURITY_HOST} ${CURITY_PORT} ${API_HOST} ${API_PORT} ${GATEWAY_CREDENTIAL}' \
+envsubst '${CURITY_SCHEME} ${CURITY_HOST} ${CURITY_PORT} ${API_SCHEME} ${API_HOST} ${API_PORT} ${GATEWAY_CREDENTIAL}' \
   < /etc/nginx/nginx.conf.template \
   > /etc/nginx/conf.d/default.conf
 echo "Generated /etc/nginx/conf.d/default.conf"
