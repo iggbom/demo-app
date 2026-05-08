@@ -20,9 +20,17 @@ echo "Using DNS resolver: ${NGINX_RESOLVER}"
 
 # Generate /etc/nginx/conf.d/default.conf from template.
 # Only the listed variables are substituted; nginx runtime vars ($host etc.) are left intact.
-envsubst '${NGINX_RESOLVER} ${CURITY_SCHEME} ${CURITY_HOST} ${CURITY_PORT} ${API_SCHEME} ${API_HOST} ${API_PORT} ${GATEWAY_CREDENTIAL}' \
+envsubst '${NGINX_RESOLVER} ${CURITY_SCHEME} ${CURITY_HOST} ${CURITY_PORT} ${CURITY_PUBLIC_HOST} ${API_SCHEME} ${API_HOST} ${API_PORT} ${GATEWAY_CREDENTIAL}' \
   < /etc/nginx/nginx.conf.template \
   > /etc/nginx/conf.d/default.conf
 echo "Generated /etc/nginx/conf.d/default.conf"
+
+# Connectivity test — runs inside Railway's network, result visible in deploy logs.
+echo "Testing Curity connectivity: ${CURITY_SCHEME}://${CURITY_HOST}:${CURITY_PORT}"
+wget -qO- --timeout=5 \
+  "${CURITY_SCHEME}://${CURITY_HOST}:${CURITY_PORT}/oauth/v2/oauth-anonymous/.well-known/openid-configuration" \
+  2>&1 | head -3 \
+  && echo "Curity reachable OK" \
+  || echo "Curity connectivity FAILED"
 
 exec "$@"

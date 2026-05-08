@@ -20,7 +20,7 @@ server {
         proxy_pass $curity_upstream/oauth/v2/oauth-token;
         proxy_ssl_server_name on;
         proxy_ssl_verify off;
-        proxy_set_header Host ${CURITY_HOST};
+        proxy_set_header Host ${CURITY_PUBLIC_HOST};
     }
 
     # API calls: phantom token module exchanges the opaque access token for a
@@ -45,6 +45,7 @@ server {
         internal;
         set $curity_upstream "${CURITY_SCHEME}://${CURITY_HOST}:${CURITY_PORT}";
         proxy_pass_request_headers off;
+        proxy_set_header Host ${CURITY_PUBLIC_HOST};
         proxy_set_header Accept "application/jwt";
         proxy_set_header Content-Type "application/x-www-form-urlencoded";
         proxy_set_header Authorization "Basic ${GATEWAY_CREDENTIAL}";
