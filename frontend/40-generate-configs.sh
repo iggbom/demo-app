@@ -7,9 +7,15 @@ sed -i "s|</head>|<script>window.env={AUTHORITY:\"${AUTHORITY}\",CLIENT_ID:\"${C
   /usr/share/nginx/html/index.html
 echo "Injected window.env into index.html"
 
+# Derive the DNS resolver from /etc/resolv.conf so nginx can resolve
+# .railway.internal hostnames at request time (127.0.0.11 is Docker-only).
+NGINX_RESOLVER=$(awk '/^nameserver/{print $2; exit}' /etc/resolv.conf)
+export NGINX_RESOLVER
+echo "Using DNS resolver: ${NGINX_RESOLVER}"
+
 # Generate /etc/nginx/conf.d/default.conf from template.
 # Only the listed variables are substituted; nginx runtime vars ($host etc.) are left intact.
-envsubst '${CURITY_SCHEME} ${CURITY_HOST} ${CURITY_PORT} ${API_SCHEME} ${API_HOST} ${API_PORT} ${GATEWAY_CREDENTIAL}' \
+envsubst '${NGINX_RESOLVER} ${CURITY_SCHEME} ${CURITY_HOST} ${CURITY_PORT} ${API_SCHEME} ${API_HOST} ${API_PORT} ${GATEWAY_CREDENTIAL}' \
   < /etc/nginx/nginx.conf.template \
   > /etc/nginx/conf.d/default.conf
 echo "Generated /etc/nginx/conf.d/default.conf"
