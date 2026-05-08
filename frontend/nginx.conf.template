@@ -24,8 +24,9 @@ server {
         phantom_token on;
         phantom_token_introspection_endpoint curity;
 
-        proxy_pass http://${API_HOST}:${API_PORT};
-        proxy_set_header Host $host;
+        proxy_pass https://${API_HOST}:${API_PORT};
+        proxy_ssl_server_name on;
+        proxy_set_header Host ${API_HOST};
         proxy_set_header X-Real-IP $remote_addr;
     }
 
