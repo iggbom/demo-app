@@ -9,7 +9,12 @@ echo "Injected window.env into index.html"
 
 # Derive the DNS resolver from /etc/resolv.conf so nginx can resolve
 # .railway.internal hostnames at request time (127.0.0.11 is Docker-only).
-NGINX_RESOLVER=$(awk '/^nameserver/{print $2; exit}' /etc/resolv.conf)
+# IPv6 addresses must be wrapped in brackets for the nginx resolver directive.
+_RAW_RESOLVER=$(awk '/^nameserver/{print $2; exit}' /etc/resolv.conf)
+case "$_RAW_RESOLVER" in
+  *:*) NGINX_RESOLVER="[${_RAW_RESOLVER}]" ;;
+  *)   NGINX_RESOLVER="${_RAW_RESOLVER}" ;;
+esac
 export NGINX_RESOLVER
 echo "Using DNS resolver: ${NGINX_RESOLVER}"
 
